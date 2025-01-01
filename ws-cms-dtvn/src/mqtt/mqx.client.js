@@ -75,7 +75,7 @@ class mqx {
                 //console.log('dataProcess', payload);
                 payload.forEach(buff => {
                     if (buff.type == 'sensor') {
-                        logController.createDataLog(mac, buff);
+                        logController.createDataLog(buff);
                         logController.createMqttLog(mac, 'sensor', 'N/A', msg);
                     }
                     else if (buff.type == 'control') {

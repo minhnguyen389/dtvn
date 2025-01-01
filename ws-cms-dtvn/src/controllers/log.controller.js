@@ -6,12 +6,12 @@ const dataLogModel = require('../models/data_log.model');
 const mqttLogModel = require('../models/mqtt_log.model');
 const statusLogModel = require('../models/status_log.model');
 const parameterModel = require('../models/parameter.model');
+const parameterController = require('./parameter.controller');
 
 let dayjs = require('dayjs');
 let utc = require('dayjs/plugin/utc')
 let timezone = require('dayjs/plugin/timezone') // dependent on utc plugin
 let customParseFormat = require('dayjs/plugin/customParseFormat');
-
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -174,12 +174,14 @@ class LogController {
         await mqttLogModel.create(log)
     }
 
-    static createDataLog = async (mac, payload) => {
+    static createDataLog = async (payload) => {
         let parameter = await parameterModel.findOne({ code: payload.id }).populate('station');
         if (!parameter) {
             console.error('createDataLog: Không có thông số đo/điều khiển phù hợp!')
             return;
         }
+
+        parameterController.updateData(parameter, payload);
 
         let log = {
             project: parameter.project_id,

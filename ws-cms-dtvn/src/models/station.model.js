@@ -119,15 +119,15 @@ let schema = new mongoose.Schema({
         required: false
     },
     u1: {
-        type: String,
+        type: Number,
         required: false
     },
     u2: {
-        type: String,
+        type: Number,
         required: false
     },
     dbm: {
-        type: String,
+        type: Number,
         required: false
     },
     created_at: Date,

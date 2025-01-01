@@ -103,6 +103,31 @@ let schema = new mongoose.Schema({
         type: String,
         required: false
     },
+    v1: {
+        type: Number,
+        required: false
+    },
+    v2: {
+        type: Number,
+        required: false
+    },
+    v3: {
+        type: Number,
+        required: false
+    },
+    v4: {
+        type: Number,
+        required: false
+    },
+    //là giá trị đọc trạng thái điều khiển
+    cv: {
+        type: Number,
+        required: false
+    },
+    time: {
+        type: String,
+        required: true
+    },
     created_at: Date,
     updated_at: Date
 });

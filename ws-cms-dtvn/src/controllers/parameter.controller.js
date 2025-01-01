@@ -226,5 +226,15 @@ class ParameterController {
         return new OK(r).send(res)
     }
 
+    static updateData = async (parameter, payload) => {
+        parameter.v1 = payload.v1;
+        parameter.v2 = payload.v2;
+        parameter.v3 = payload.v3;
+        parameter.v4 = payload.v4;
+        parameter.time = payload.t;
+
+        await parameter.save();
+    }
+
 }
 module.exports = ParameterController
