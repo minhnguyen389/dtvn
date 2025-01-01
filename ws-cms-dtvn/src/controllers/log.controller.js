@@ -19,7 +19,7 @@ dayjs.extend(customParseFormat)
 
 
 class LogController {
-    //api
+
     static getListDataLogs = async (req, res) => {
         let limit = parseInt(req.query.limit, 10);
         if (isNaN(limit)) {
@@ -32,32 +32,18 @@ class LogController {
         }
         let where = {};
 
-        if (req.query.company_id) {
-            where.company = req.query.company_id
+        if (req.query.project_id) {
+            where.project_id = req.query.project_id
         }
         if (req.query.station_id) {
-            where.station = req.query.station_id
+            where.station_id = req.query.station_id
         }
-        if (req.query.logger_id) {
-            where.logger = req.query.logger_id
+        if (req.query.parameter_id) {
+            where.parameter_id = req.query.parameter_id
         }
-        if (req.query.nozzle_id) {
-            where.nozzle = req.query.nozzle_id
+        if (req.query.data_type) {
+            where.data_type = req.query.data_type
         }
-
-        if (req.authorizedPayload.company_id) {
-            where.company = req.authorizedPayload.company_id
-        }
-        if (req.query.sent_result) {
-            where.sent_result = req.query.sent_result
-        }
-        if (req.query.sent_to_partner) {
-            where.sent_to_partner = req.query.sent_to_partner
-        }
-        if (req.query.test_data) {
-            where.test_data = req.query.test_data
-        }
-
 
         let time_start = req.query.time_start
         let time_end = req.query.time_end
@@ -76,17 +62,11 @@ class LogController {
             $lte: time_end.toDate()
         }
 
-        let populate = [];
-        if (req.query.populate == 1) {
-            populate = ['company', 'station', 'logger', 'nozzle'];
-        }
-
-
-        let r = await saleLogModel.paginate(where, {
+        let r = await dataLogModel.paginate(where, {
             sort: { created_at: -1 },
             limit: limit,
             offset: offset,
-            populate: populate
+            populate: ['project', 'station', 'parameter']
         })
         return new OK(r).send(res)
     }
@@ -103,32 +83,15 @@ class LogController {
         }
         let where = {};
 
-        if (req.query.company_id) {
-            where.company = req.query.company_id
+        if (req.query.code) {
+            where.code = req.query.code
         }
-        if (req.query.station_id) {
-            where.station = req.query.station_id
+        if (req.query.type) {
+            where.type = req.query.type
         }
-        if (req.query.logger_id) {
-            where.logger = req.query.logger_id
+        if (req.query.message_id) {
+            where.message_id = req.query.message_id
         }
-        if (req.query.nozzle_id) {
-            where.nozzle = req.query.nozzle_id
-        }
-
-        if (req.authorizedPayload.company_id) {
-            where.company = req.authorizedPayload.company_id
-        }
-        if (req.query.sent_result) {
-            where.sent_result = req.query.sent_result
-        }
-        if (req.query.sent_to_partner) {
-            where.sent_to_partner = req.query.sent_to_partner
-        }
-        if (req.query.test_data) {
-            where.test_data = req.query.test_data
-        }
-
 
         let time_start = req.query.time_start
         let time_end = req.query.time_end
@@ -147,17 +110,10 @@ class LogController {
             $lte: time_end.toDate()
         }
 
-        let populate = [];
-        if (req.query.populate == 1) {
-            populate = ['company', 'station', 'logger', 'nozzle'];
-        }
-
-
-        let r = await saleLogModel.paginate(where, {
+        let r = await mqttLogModel.paginate(where, {
             sort: { created_at: -1 },
             limit: limit,
-            offset: offset,
-            populate: populate
+            offset: offset
         })
         return new OK(r).send(res)
     }
@@ -175,11 +131,11 @@ class LogController {
         let where = {};
 
         if (req.query.station_id) {
-            where.station = req.query.station_id
+            where.station_id = req.query.station_id
         }
 
-        if (req.query.test_data) {
-            where.test_data = req.query.test_data
+        if (req.query.status) {
+            where.status = req.query.status
         }
 
         let time_start = req.query.time_start
@@ -199,17 +155,11 @@ class LogController {
             $lte: time_end.toDate()
         }
 
-        let populate = [];
-        if (req.query.populate == 1) {
-            populate = ['company', 'station', 'logger', 'nozzle'];
-        }
-
-
-        let r = await saleLogModel.paginate(where, {
+        let r = await statusLogModel.paginate(where, {
             sort: { created_at: -1 },
             limit: limit,
             offset: offset,
-            populate: populate
+            populate: 'station'
         })
         return new OK(r).send(res)
     }
@@ -246,6 +196,16 @@ class LogController {
             time: payload.t
         }
         await dataLogModel.create(log)
+    }
+
+    static createStatusLog = async (mac, station_id, status) => {
+        let log = {
+            station: station_id,
+            station_id: station_id,
+            code: mac,
+            status: status
+        }
+        await statusLogModel.create(log)
     }
 }
 

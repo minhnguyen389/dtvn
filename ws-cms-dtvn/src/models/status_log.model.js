@@ -14,6 +14,11 @@ let schema = new mongoose.Schema({
         index: true,
         required: true
     },
+    code: {
+        type: String,
+        index: true,
+        required: true
+    },
     status: {
         type: Boolean,
         required: true,

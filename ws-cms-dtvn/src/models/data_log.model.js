@@ -73,7 +73,7 @@ let schema = new mongoose.Schema({
     updated_at: Date
 });
 
-schema.index({ parameter_id: 1, data_type: 1 }, { unique: false });
+schema.index({ station_id: 1, parameter_id: 1, data_type: 1 }, { unique: false });
 schema.index({ created_at: -1 });
 
 schema.pre('save', function (next) {

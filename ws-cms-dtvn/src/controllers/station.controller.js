@@ -9,6 +9,7 @@ const stationRecordModel = require("../models/station_record.model");
 const Constants = require('../constants');
 const dayjs = require('dayjs');
 const Checksum = require('../helper/checksum');
+const LogController = require('./log.controller');
 
 class StationController {
     static create = async (req, res) => {
@@ -426,8 +427,12 @@ class StationController {
             return;
         }
 
+        if (station.status) return;
+
         station.status = true;
         await station.save();
+
+        LogController.createStatusLog(mac, station._id, true);
 
         //Luu lasttime cho station,
         const key = `station_lasttime:${station._id}`;
@@ -441,8 +446,12 @@ class StationController {
             return;
         }
 
+        if (!station.status) return;
+
         station.status = false;
         await station.save();
+
+        LogController.createStatusLog(station.code, station._id, false)
 
         const key = `station_lasttime:${station._id}`;
         await require('../cache/init.redis').getRedisClient().del(key);

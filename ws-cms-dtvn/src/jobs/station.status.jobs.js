@@ -24,7 +24,7 @@ class StationStatusJobs {
                 const stationTimeOn = parseInt(r, 10);
                 const stationId = keys[i].split(':')[1];
                 const diff = (currentTime - stationTimeOn) / 1000;
-                if (diff >= 30) {//30 seconds
+                if (diff >= 120) {//seconds
                     stationController.setOffline(stationId);
                 }
             }
