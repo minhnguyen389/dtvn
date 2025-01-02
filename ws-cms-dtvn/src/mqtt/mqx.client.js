@@ -4,7 +4,7 @@ const mqtt = require('mqtt');
 // const { calculateCRC } = require('../helper/checksum');
 const logController = require('../controllers/log.controller');
 const stationController = require('../controllers/station.controller');
-
+const { calculateCRC } = require('../helper/checksum');
 
 class mqx {
     constructor() {
@@ -66,9 +66,30 @@ class mqx {
     }
 
     dataProcess(topic, msg) {
+        console.log(msg);
         try {
-            const payload = JSON.parse(msg);
+
             const mac = topic.split('/')[1];
+
+            //Check CRC
+            //Split CRC and check
+            const l = msg.slice(0, -5);
+            const r = msg.slice(-5).slice(0, -1);
+            const crc = calculateCRC(l);
+            if (crc != r) {
+                console.log(`crc:`, crc);
+                console.log(`__ERR CRC: ${JSON.stringify(msg)}`);
+                return;
+            }
+
+
+            //Check JSON
+            const startIndex = msg.indexOf("[");
+            const endIndex = msg.indexOf("]");
+            const jsonArray = msg.substring(startIndex, endIndex + 1);
+            const payload = JSON.parse(jsonArray);
+
+
             stationController.setOnline(mac);
 
             if (Array.isArray(payload)) {
@@ -102,7 +123,7 @@ class mqx {
             }
 
         } catch (error) {
-            console.error('Lỗi bản tin MQTT topic Data!')
+            console.error('Lỗi bản tin MQTT topic Data!', error)
         }
     }
 
