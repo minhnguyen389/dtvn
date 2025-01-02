@@ -427,6 +427,10 @@ class StationController {
             return;
         }
 
+        //Luu lasttime cho station,
+        const key = `station_lasttime:${station._id}`;
+        await require('../cache/init.redis').getRedisClient().set(key, new Date().getTime().toString());
+
         if (station.status) return;
 
         station.status = true;
@@ -434,9 +438,7 @@ class StationController {
 
         LogController.createStatusLog(mac, station._id, true);
 
-        //Luu lasttime cho station,
-        const key = `station_lasttime:${station._id}`;
-        await require('../cache/init.redis').getRedisClient().set(key, new Date().getTime().toString());
+        
     }
 
     static setOffline = async (id) => {

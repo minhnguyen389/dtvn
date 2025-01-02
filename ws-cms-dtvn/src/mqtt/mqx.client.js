@@ -66,7 +66,6 @@ class mqx {
     }
 
     dataProcess(topic, msg) {
-        console.log(msg);
         try {
 
             const mac = topic.split('/')[1];
